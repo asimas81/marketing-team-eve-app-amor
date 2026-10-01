@@ -170,7 +170,7 @@ const slackCoordinate = (
 };
 
 /**
- * Tool that posts the Typefully analytics digest back into the thread that asked for it.
+ * Tool that posts an analytics digest back into the thread that asked for it.
  *
  * @remarks
  * The destination is never model input. It comes from the Slack coordinates the channel stamped

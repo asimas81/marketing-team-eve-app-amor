@@ -89,11 +89,10 @@ const ALLOWED_TOOLS = [
  * Bare Resend MCP tool names that put mail in somebody's inbox.
  *
  * @remarks
- * Always gated, including a scheduled send. This is the one place the Typefully pattern does not
- * transfer: there, `publish_at` distinguishes saving a draft from committing to publish, so an
- * ungated create is safe. Resend already separates those into different tools, and every tool here
- * is the commit step. `send-broadcast` with no `scheduledAt` mails the whole segment the moment it
- * returns, and mail cannot be recalled, so there is no unscheduled case worth letting through.
+ * Always gated, including a scheduled send. Resend separates composing from committing into
+ * different tools, and every tool here is the commit step. An ungated create is only safe when
+ * saving a draft cannot publish. `send-broadcast` with no `scheduledAt` mails the whole segment
+ * the moment it returns, and mail cannot be recalled, so there is no unscheduled case worth letting through.
  *
  * Composing, updating, and publishing are not gated: building the campaign is the normal flow, the
  * same reason `notion-create-pages` is left open.

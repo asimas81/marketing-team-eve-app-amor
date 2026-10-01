@@ -14,10 +14,9 @@ export default defineAgent({
   compaction: { thresholdPercent: 0.9 },
   description:
     "Run social media work end to end for X, LinkedIn, Threads, Bluesky, and Mastodon: draft " +
-    "posts and threads in each platform's voice, adapt one piece across platforms, and manage " +
-    "the Typefully queue (read, create, and edit drafts, schedule on request, pull post and " +
-    "follower analytics). Researches facts and reviews its own drafts before handing them back. " +
-    "The caller passes the brief or source material, the target platforms, and any angle, " +
-    "audience, or timing constraints in the message.",
+    "posts and threads in each platform's voice, adapt one piece across platforms, and hand the " +
+    "drafts back in the conversation. Researches facts and reviews its own drafts before handing " +
+    "them back. The caller passes the brief or source material, the target platforms, and any " +
+    "angle, audience, or timing constraints in the message.",
   model: "anthropic/claude-opus-5",
 });

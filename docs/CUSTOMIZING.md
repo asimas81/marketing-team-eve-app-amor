@@ -15,7 +15,7 @@ Run `pnpm validate` after any change, and `npx eve info` to see what eve discove
 | The lead's behavior | `agent/instructions.md` |
 | A specialist's behavior | `agent/subagents/<id>/instructions.md` |
 | Models | `agent/agent.ts`, `agent/subagents/<id>/agent.ts`, or `/model` in the TUI |
-| Approval gates | `APPROVAL_REQUIRED_TOOLS` in `notion.ts`, `DELETE_TOOLS`/`PUBLISH_TOOLS` in `typefully.ts`, `SEND_TOOLS`/`DESTRUCTIVE_TOOLS` in `resend.ts` |
+| Approval gates | `APPROVAL_REQUIRED_TOOLS` in `notion.ts`, `SEND_TOOLS`/`DESTRUCTIVE_TOOLS` in `resend.ts` |
 | Resend's tool surface | `ALLOWED_TOOLS` in `agent/subagents/email/connections/resend.ts` |
 | Slack suggested prompts | `SUGGESTED_PROMPTS` in `agent/channels/slack.ts` |
 
