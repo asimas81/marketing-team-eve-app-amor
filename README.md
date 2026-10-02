@@ -7,9 +7,9 @@
 
 Run a team of marketing agents built on [eve](https://eve.dev). You bring work to a team lead: a launch to plan, posts to write, or a page that isn't converting. The lead briefs the right specialist and hands back what they produced.
 
-You talk to it in Slack or a terminal. It delivers real work in the tools you already use: blog drafts in Notion, social drafts in the conversation, email campaigns in Resend.
+You talk to it in the Next.js web chat, Slack, or the eve terminal. It delivers real work in the tools you already use: blog drafts in Notion, social drafts in the conversation, email campaigns in Resend.
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?project-name=marketing-team-eve-template&repository-name=marketing-team-eve-template&repository-url=https%3A%2F%2Fgithub.com%2Fvercel-labs%2Fmarketing-team-eve-template%2Ftree%2Fmain&connect=%5B%7B%22type%22%3A%22notion%22%2C%22env%22%3A%22NOTION_CONNECTOR%22%7D%2C%7B%22type%22%3A%22resend%22%2C%22env%22%3A%22RESEND_CONNECTOR%22%7D%2C%7B%22type%22%3A%22slack%22%2C%22env%22%3A%22SLACK_CONNECTOR%22%2C%22triggers%22%3Atrue%2C%22triggerPath%22%3A%22%2Feve%2Fv1%2Fslack%22%7D%5D&stores=%5B%7B%22type%22%3A%22blob%22%2C%22access%22%3A%22public%22%7D%5D)
+Template version: **0.1.0**. Based on [vercel-labs/marketing-team-eve-template](https://github.com/vercel-labs/marketing-team-eve-template), with Eve 0.69.0 and a Next.js web frontend. See [starting a new project](#starting-a-new-project) before linking cloud resources.
 
 ## What using it looks like
 
@@ -21,28 +21,70 @@ You talk to it in Slack or a terminal. It delivers real work in the tools you al
 
 Anything irreversible, like sending an email campaign, pauses for your approval first. You get an approve or deny button in Slack or the terminal before it goes out.
 
-## Deploy
+## Starting a new project
 
-The one-click deploy provisions and wires up everything the team needs:
+Use this repository's **Use this template** action on GitHub, then clone the newly created repository. Each project should have its own Git history, Vercel project, Blob store, and connector configuration. Keep the template's MIT license and upstream attribution.
 
-| Provisioned | Sets |
-| --- | --- |
-| Notion connector | `NOTION_CONNECTOR` |
-| Resend connector | `RESEND_CONNECTOR` |
-| Slack connector | `SLACK_CONNECTOR` |
-| Vercel Blob store | Blob credentials |
+Requirements: Node.js **24.x**, pnpm **11.22.0**, and a Vercel account with access to the configured models and Sandbox. The Vercel CLI is installed as a development dependency; a global installation is unnecessary.
 
-### Before your first email campaign
+From the new repository's root:
 
-Verify a sending domain and create at least one segment in the [Resend dashboard](https://resend.com/domains). The agent sees your verified domains and segments and picks from them, but it cannot create a domain or verify DNS for you.
-
-### Quick start with an AI coding agent
-
-Working in Claude Code or Cursor? Paste this:
-
-```text
-I want to build a team of marketing agents with the eve framework, using the marketing team template. Read the setup instructions at https://agent-resources.dev/marketing-team-eve-template.md and follow them. They will cover deploying the template, building with eve, how everything works overall, and more.
+```bash
+corepack enable
+pnpm --version
+pnpm install --frozen-lockfile
+pnpm validate
 ```
+
+`packageManager` selects pnpm 11.22.0 through Corepack. If Corepack is unavailable, install that exact pnpm version with your package-manager setup first. Keep `pnpm-lock.yaml` in Git; use `--frozen-lockfile` for fresh installations. Validation checks lint, backend and frontend types, and Eve discovery without requiring project credentials.
+
+### Link and configure this project's resources
+
+```bash
+pnpm exec eve link
+```
+
+Select or create the Vercel project for this new application. In that project's dashboard, connect these resources and set the connector UIDs in both Development and Production as appropriate:
+
+| Resource | Configuration |
+| --- | --- |
+| Vercel AI Gateway | Access and credits for the lead and specialist models, including calls with tools |
+| Vercel Sandbox | Project access for the six agent sandboxes and their skill files |
+| Vercel Blob | A dedicated public Blob store attached to this project; retain the generated environment configuration |
+| Notion through Vercel Connect | `NOTION_CONNECTOR`: the new connector UID |
+| Resend through Vercel Connect | `RESEND_CONNECTOR`: the new connector UID |
+| Slack through Vercel Connect | `SLACK_CONNECTOR`: the new connector UID, when using Slack |
+
+[.env.example](./.env.example) documents connector variables; it contains example UIDs, not working credentials. After provisioning or changing integrations, refresh the local environment:
+
+```bash
+pnpm exec vercel env pull .env.local
+pnpm dev:all
+```
+
+Open the local URL printed by Vercel. For a fixed loopback address, use `pnpm dev:all --listen 127.0.0.1:3010`. Use `pnpm dev` instead for the terminal interface. Run one of these modes at a time for the same agent.
+
+Never copy another project's `.env.local`, `.vercel`, `.eve`, or build output. The new Blob store starts without brand context, preferences, and handoff artifacts. Establish the new product's context through the product marketer. Each user authorizes Notion and Resend through the connection flow; connector UIDs do not replace that authorization.
+
+The lead is configured as `google/gemini-3.8-flash`; all five specialists use `anthropic/claude-opus-5`. These values live in each `agent.ts`. Verify model access with a delegated request that uses a tool. A successful plain-text model call alone does not establish tool-call access.
+
+### Channels and deployment
+
+The web chat is ready for local development. Its production Eve API currently accepts Vercel OIDC authentication, while local sessions use `localDevUser` in `agent/channels/eve.ts`. Before offering browser chat to end users, configure the application's session authentication and pass it to the Eve client; deploying the starter does not add a public user-login system.
+
+For Slack, enable triggers on the connector and register `/eve/v1/slack` as the destination on the deployed application. Conversation starter prompts also require the Agents and AI Apps feature, the `assistant:write` bot scope, and the `assistant_thread_started` and `app_home_opened` trigger events. See `agent/channels/slack.ts` for the channel configuration.
+
+After linking the project and provisioning its resources:
+
+```bash
+pnpm build
+pnpm build:web
+pnpm exec eve deploy
+```
+
+`eve build` prepares the Vercel sandboxes and requires the linked project's credentials. `vercel.ts` composes the Eve service and `apps/web` frontend; deployment runs through `eve deploy` from the repository root. The Windows development launcher in `scripts/eve-dev.mjs` preserves this layout without relying on Unix shell syntax.
+
+Before an email campaign, verify the sending domain and create at least one segment in Resend. Review a draft and its approval flow before sending to an audience.
 
 ## The team
 
@@ -70,22 +112,33 @@ The full approval matrix, the credential model, and the reasoning behind each bo
 
 ## Local development
 
-Link the project you deployed, or a fresh one, and pull its environment:
-
-```bash
-vercel link
-vercel env pull
-pnpm dev          # then run /model once in the TUI to link a provider
-```
-
 | Command | What it does |
 | --- | --- |
-| `pnpm dev` | eve dev TUI |
-| `pnpm validate` | Lint, typecheck, and discovery diagnostics in one |
-| `pnpm check` / `pnpm fix` | Ultracite check and auto-fix |
-| `pnpm typecheck` | `tsc --noEmit` |
-| `npx eve info` | Print every discovered tool, skill, connection, and subagent |
-| `eve deploy` | Ship to production |
+| `pnpm install --frozen-lockfile` | Install the exact locked dependency tree |
+| `pnpm dev` / `pnpm dev:eve` | Eve terminal interface |
+| `pnpm dev:all` | Eve and Next.js through the Vercel service router |
+| `pnpm dev:web` | Frontend only; use `dev:all` for connected chat |
+| `pnpm validate` | Lint, both TypeScript projects, and Eve discovery |
+| `pnpm check` / `pnpm fix` | Ultracite check and formatting |
+| `pnpm typecheck` | Agent, service configuration, and frontend types |
+| `pnpm exec eve info` | Discovered agents, tools, skills, connections, and diagnostics |
+| `pnpm build` / `pnpm build:web` | Eve and Next.js production builds |
+| `pnpm exec eve deploy` | Deploy the linked project to production |
+
+## Template releases
+
+The template has its own version, separate from the Eve package version. Version **0.1.0** includes the Eve 0.69 migration, all five specialists, the web chat, and Windows development support. Dependency versions are recorded in the lockfile.
+
+Keep `main` ready to serve as the source of new projects. For each template release, update `package.json`, validate a clean installation, and publish an annotated Git tag and GitHub release with the same version, such as `v0.1.0`. Use patch versions for compatible fixes, minor versions for template improvements during 0.x, and 1.0 once the base is established across real projects.
+
+Projects created with **Use this template** have independent histories and do not receive template changes automatically. Record the source repository, version, and commit in each derived project's README. Keep that origin record when the new project's own version changes. To reproduce an older template exactly, start from its tagged source archive; **Use this template** normally uses the default branch.
+
+Before publishing a template release:
+
+1. Install a clean copy with Node 24 and `pnpm install --frozen-lockfile`, without local environment files or generated folders.
+2. Run `pnpm validate` and `pnpm build:web` in that copy.
+3. In a linked development environment, run `pnpm build` and exercise chat, a specialist tool, session resumption, and approval handling. Record any provider-access limitation separately from static validation.
+4. Include `apps/web`, `scripts`, `vercel.ts`, the lockfile, and `.env.example` in the release. Exclude credentials, cloud-project links, local assistant settings, dependencies, and generated output.
 
 ## Under the hood
 
@@ -93,7 +146,7 @@ pnpm dev          # then run /model once in the TUI to link a provider
 | --- | --- |
 | Agent framework | [eve](https://eve.dev) |
 | Language | TypeScript (strict, ESM), Node 24.x |
-| Chat surfaces | Slack via Vercel Connect, the eve dev TUI |
+| Chat surfaces | Next.js web chat, Slack via Vercel Connect, the eve dev TUI |
 | Long-form deliverables and briefs | Notion (MCP) |
 | Social drafts | Conversation, until a publishing connection is added |
 | Email campaigns | Resend (MCP) |

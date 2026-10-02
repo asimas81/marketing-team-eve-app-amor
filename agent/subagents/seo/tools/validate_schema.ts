@@ -187,12 +187,16 @@ export default defineTool({
 
     let required: Record<string, string[]> | null = null;
     try {
-      const raw = await ctx
-        .getSkill("schema")
-        .file(REQUIRED_PROPERTIES_FILE)
-        .text();
-      const parsed = REQUIRED_PROPERTIES_SCHEMA.safeParse(JSON.parse(raw));
-      required = parsed.success ? parsed.data : null;
+      const sandbox = await ctx.getSandbox();
+      const result = await sandbox.run({
+        command: `if [ -n "$HOME" ]; then cat "$HOME/.agents/skills/schema/${REQUIRED_PROPERTIES_FILE}"; else cat "/workspace/skills/schema/${REQUIRED_PROPERTIES_FILE}"; fi`,
+      });
+      if (result.exitCode === 0) {
+        const parsed = REQUIRED_PROPERTIES_SCHEMA.safeParse(
+          JSON.parse(result.stdout)
+        );
+        required = parsed.success ? parsed.data : null;
+      }
     } catch {
       required = null;
     }

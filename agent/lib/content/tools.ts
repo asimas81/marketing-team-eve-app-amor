@@ -23,7 +23,7 @@ import {
  * Tool that checks a draft against the active surface's banned-words list.
  *
  * @remarks
- * The list is read at runtime through the skill handle, so each style skill stays the source of
+ * The list is read at runtime from the sandbox, so each style skill stays the source of
  * truth for its own surface. Each agent passes the surfaces it actually authors a `<surface>-style`
  * skill for, so the resolved skill id and file path come from a fixed enum and can never be
  * influenced by the caller. Any failure to resolve, read, parse, or validate the list is treated as
@@ -54,11 +54,14 @@ export const lintAgainstStyleTool = (
     async execute({ surface, text }, ctx) {
       let banned: string[] = [];
       try {
-        const raw = await ctx
-          .getSkill(styleSkillId(surface))
-          .file(BANNED_WORDS_FILE)
-          .text();
-        banned = parseBannedWords(raw);
+        const sandbox = await ctx.getSandbox();
+        const path = `${styleSkillId(surface)}/${BANNED_WORDS_FILE}`;
+        const result = await sandbox.run({
+          command: `if [ -n "$HOME" ]; then cat "$HOME/.agents/skills/${path}"; else cat "/workspace/skills/${path}"; fi`,
+        });
+        if (result.exitCode === 0) {
+          banned = parseBannedWords(result.stdout);
+        }
       } catch {
         banned = [];
       }

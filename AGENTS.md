@@ -13,12 +13,14 @@ The whole agent is defined under `agent/`. eve discovers capabilities from the f
 ## Setup & commands
 
 ```bash
-pnpm install        # install dependencies (Node 24.x)
+pnpm install --frozen-lockfile # install dependencies (Node 24.x, pnpm 11.22.0)
 pnpm dev            # eve dev — local TUI; run /model once to link a model provider
-pnpm typecheck      # tsc (TypeScript, no emit)
+pnpm dev:all        # Eve + Next.js through the local Vercel service router
+pnpm typecheck      # agent, service configuration and web TypeScript (no emit)
 pnpm check          # ultracite (Biome) lint + format check
 pnpm fix            # ultracite (Biome) auto-fix
 pnpm build          # eve build
+pnpm build:web      # Next.js production build
 eve deploy          # deploy to Vercel production (use this, not raw `vercel deploy`)
 npx eve info        # print the discovered surface + discovery diagnostics
 pnpm validate       # check + typecheck + eve info in one command
@@ -129,7 +131,7 @@ That checklist's last section is a different kind of check and is deliberately k
 
 ## Context engineering
 
-Every agent here runs on a Claude 5 model, which infers intent well and loses reasoning to contradictions and repeated instructions. So the guidance is deliberately thinner than it looks like it should be, and adding to it is not free. Four rules:
+The lead uses `google/gemini-3.8-flash`; the five specialists use `anthropic/claude-opus-5`. Confirm the actual model in each `agent.ts` before changing configuration. The guidance is deliberately concise, and adding to it is not free. Four rules:
 
 - **Usage guidance lives in the tool description, once.** `get_brand_context` already tells the model to call it at the start of a task, so no `instructions.md` repeats that. Before adding a line about a tool to an `instructions.md`, check whether the tool's own description says it, and keep only one copy. What belongs in `instructions.md` is the judgment a tool can't know: when the empty brand context means onboard the user, that a campaign brief goes in the delegation instead of the shared document.
 - **Invest in the interface, not in examples.** A `.describe()` on every parameter and a described `outputSchema` teach usage better than a worked example, and an example also narrows what the model will try. `lib/content/tools.ts` is the reference: the surface enum names the valid options, and the description says what a clean result does and doesn't prove.

@@ -7,3 +7,10 @@ minimumReleaseAgeExclude:
   - ai
   - chat
   - workflow
+
+ignoredOptionalDependencies:
+  - "@mongodb-js/zstd"
+  - "node-liblzma"
+
+allowBuilds:
+  esbuild@0.27.0: true

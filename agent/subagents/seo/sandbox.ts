@@ -1,5 +1,5 @@
 import { defineSandbox } from "eve/sandbox";
-import { vercel } from "eve/sandbox/vercel";
+import { VercelSandbox } from "eve/sandbox/vercel";
 
 /**
  * Subagent sandbox configuration.
@@ -12,6 +12,6 @@ import { vercel } from "eve/sandbox/vercel";
  *
  * @see {@link https://vercel.com/docs/sandbox | Vercel Sandbox}
  */
-export default defineSandbox({
-  backend: vercel(),
-});
+export const environment = VercelSandbox.environment();
+
+export default defineSandbox(() => environment.open());
