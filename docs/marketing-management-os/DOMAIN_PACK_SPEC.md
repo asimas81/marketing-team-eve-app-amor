@@ -15,6 +15,8 @@ Domain Pack é um pacote versionado e opcional de conhecimento sobre um segmento
 | Adaptadores | Campos configuráveis por Product, perguntas de onboarding e mapeamento para blocos do Product Context; sem código executável no MVP |
 | Avaliação | Casos de teste com entrada, parecer esperado, abstenção e comportamento diante de fatos conflitantes |
 
+O schema de conteúdo inclui `domain` (`id`, `name`, `version`, `status`), `vocabulary` (`preferred_terms`, `ambiguous_terms`, `prohibited_terms`), `market` (`buying_cycle`, `stakeholders`, `common_objections`, `common_decision_factors`), `claims` (`allowed`, `restricted`, `prohibited`, `evidence_required`), `regulatory` (`requirements`, `disclaimers`, `restrictions`), `channels` (`patterns`, `caveats`), `metrics` (`primary`, `secondary`, `definitions`), `risks` (`legal`, `reputational`, `ethical`) e `sources.references`. Cada regra ou afirmação relevante registra fonte, jurisdição/mercado, data de verificação, owner e grau de confiança. O pack orienta revisão; aplicação de exigência regulatória concreta pede fonte atual e validação humana apropriada.
+
 ## Contrato do especialista consultivo
 
 Entrada: `workspace_id` autorizado, `product_id`, contexto e brief fixados por versão, tarefa, mercados, idioma, versão do pack e referências permitidas. Saída estruturada: um dos estados `APPROVED`, `APPROVED_WITH_CONSTRAINTS`, `NEEDS_REVIEW`, `BLOCKED`; recomendações, claims, riscos/restrições, perguntas, fontes, confiança e indicação de escopo insuficiente quando o pack não cobre o caso. Cada recomendação aponta para item do pack ou evidência externa verificada. O parecer é armazenado como snapshot da tarefa para auditoria. O especialista não escreve o Product Context, não altera campanha e não publica.

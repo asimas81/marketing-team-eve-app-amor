@@ -110,7 +110,7 @@ Each specialist has a distinct job: the product marketer decides what the team c
 - **Nothing irreversible happens without you.** Sends and deletes in Resend, and page moves in Notion, all wait for your approval. Drafting stays friction-free. The email specialist also only sees 47 of Resend's roughly 85 tools, so account administration is out of reach entirely.
 - **Slack pins four starter prompts** in a fresh conversation: sharpen our positioning, write a blog post, draft social posts, review a page's SEO.
 
-The two new specialists are the first execution-plane step toward the [Marketing Management OS architecture](./docs/marketing-management-os/AGENT_TOPOLOGY.md). They work from approved context included in the lead's brief. The Product Context, Domain Pack, creative asset, approval, and campaign APIs are planned, not connected here yet. The creative producer currently returns production specifications; it does not render image or video files. The original five specialists, Eve channels, and web chat remain in place.
+The two new specialists are the first execution-plane step toward the [Marketing Management OS PRD](./docs/marketing-management-os/PRD.md) and [agent topology](./docs/marketing-management-os/AGENT_TOPOLOGY.md). They work from approved context included in the lead's brief. The Product Context, Domain Pack, creative asset, approval, and campaign APIs are planned, not connected here yet. The creative producer currently returns production specifications; it does not render image or video files. The original five specialists, Eve channels, and web chat remain in place.
 
 The full approval matrix, the credential model, and the reasoning behind each boundary live in [`docs/ARCHITECTURE.md`](./docs/ARCHITECTURE.md).
 

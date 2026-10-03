@@ -4,6 +4,8 @@
 
 O OS distingue aprovação editorial/estratégica da autorização de uma ação externa. A primeira afirma que uma versão de contexto, brief ou entrega está pronta para uso. A segunda autoriza um payload específico: provedor, conta, destino, audiência, volume, horário, conteúdo/hash e custo quando houver. Aprovar uma peça não equivale a autorizar envio, publicação ou deleção.
 
+O estado `APPROVED` de um [DomainAdvisory](./DOMAIN_ADVISORY_SPEC.md) indica somente que a revisão de domínio passou. O status `APPROVED` de uma versão criativa indica que aquele material foi aceito editorialmente. Ambos são distintos de `ApprovalRequest` para executar uma ação externa.
+
 ## Matriz inicial
 
 | Ação | Preparação | Decisão exigida | Execução |

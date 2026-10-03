@@ -20,6 +20,8 @@ Um Product Context Pack é o conjunto versionado de fatos, escolhas de posiciona
 | Questões abertas | dúvida, impacto, quem resolve, evidência necessária | Incerteza permanece visível e não se transforma em fato por repetição |
 | Objetivos e métricas | objetivo principal/secundário, north star e definições de aquisição, conversão e retenção | Definições têm unidade, janela, fonte e dono; números observados ficam no módulo de métricas |
 
+O contrato de dados organiza esses blocos em `product` (`id`, `name`, `category`, `lifecycle_stage`, `description`), `audience` (`primary`, `secondary`), `positioning` (`problem`, `promise`, `differentiators`), `brand` (`voice`, `visual_identity`, `prohibited_language`, `banned_claims`), `offer` (`products`, `plans`, `pricing`, `trial`), `journey` (`acquisition`, `activation`, `conversion`, `retention`), `constraints` (`legal`, `regulatory`, `ethical`, `commercial`), `goals` (`primary`, `secondary`) e `metrics` (`north_star`, `acquisition`, `conversion`, `retention`). Campos opcionais podem ficar ausentes ou marcados como desconhecidos; ausência nunca autoriza inferir preço, benefício ou capacidade.
+
 ## Envelope e versões
 
 Metadados: `pack_id`, `workspace_id`, `product_id`, `schema_version`, `revision`, `status` (`draft`, `in_review`, `published`, `superseded`, `archived`), `locale`, `created_by`, `approved_by`, `created_at`, `published_at`, `content_hash`, `source_refs`. Revisões publicadas são imutáveis. Uma versão pode ser retirada de uso para novos trabalhos sem alterar campanhas que a fixaram; trabalhos antigos exibem aviso de contexto desatualizado. Migração de schema é explícita e preserva o original.

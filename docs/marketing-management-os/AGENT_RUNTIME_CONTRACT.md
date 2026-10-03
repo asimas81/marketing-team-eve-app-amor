@@ -4,6 +4,8 @@
 
 Contrato alvo para integrar Marketing Management OS (control plane) e Eve (execution plane). Os dois novos subagentes locais existem, mas esta API ainda não está implementada. Nesta etapa, o lead passa snapshots autorizados em `message` e recebe texto revisável; nenhuma resposta deve alegar persistência, asset ou aprovação de negócio sem resultado de ferramenta correspondente.
 
+O [PRD](./PRD.md) define requisitos e escopo de produto; [DOMAIN_ADVISORY_SPEC](./DOMAIN_ADVISORY_SPEC.md) e [CREATIVE_STUDIO_SPEC](./CREATIVE_STUDIO_SPEC.md) detalham os dois contratos especializados. Esta API deve preservar o mesmo significado dos campos entre UI, ferramentas Eve e registros do OS.
+
 ## Chamada de tarefa
 
 `RunAgentTask` carrega `contract_version`, `agent_run_id`, `requested_by` autenticado, `workspace_id`, `product_id`, `campaign_id` opcional, `task_type`, `source_artifact_ids`, `context_version_id`, `domain_pack_id/version` opcional, `brief_version`, `permissions` e correlation ID. IDs são referências, não autoridade. O OS valida membership e escopo de todos os recursos antes de montar um snapshot mínimo para o agente. A API pode retornar apenas o recorte necessário; o modelo nunca recebe token de acesso ao banco.

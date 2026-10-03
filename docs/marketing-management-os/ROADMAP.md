@@ -4,12 +4,12 @@
 
 | Fase | Entrega | Dependência e gate de saída |
 | --- | --- | --- |
-| 0. Decisões e baseline | Validar contratos deste pacote, perfis de usuário, escopo MVP, provedor de identidade/banco e política de retenção; registrar cenários Eve e Notion atuais | Aceitar hierarquia Workspace → Product → Campaign e responsabilidades dos sete especialistas |
+| 0. Decisões e baseline | Revisar [PRD](./PRD.md), contratos especializados, perfis de usuário, escopo MVP, provedor de identidade/banco e retenção; registrar cenários Eve e Notion atuais | Aceitar hierarquia Workspace → Product → Campaign e responsabilidades dos sete especialistas |
 | 1. Fundação multi-tenant | Login web, User/Membership, Workspace, RBAC servidor, banco, auditoria, assets privados e vínculo de sessão Eve | Testes de isolamento entre Workspaces e autenticação web de ponta a ponta |
 | 2. Products e contexto | Cadastro Product, Product Context Pack versionado, fontes/claims, editor/diff e aprovação; gateway de contexto para lead e especialistas | Dois Products no mesmo Workspace geram briefings isolados e reprodutíveis |
 | 3. Campanhas e entregáveis | Campaign/Brief, WorkItems, catálogo e versões de Deliverable, UI de planejamento/revisão, ferramentas Eve para persistir entregas | Newsletter e peça SEO percorrem especialistas em sequência, com IDs e versões corretos |
 | 4. Aprovação e execução | Fila de decisões, RBAC por ação, snapshot/hash, idempotência e reconciliação; integrar gates Eve e Resend | Mudança no conteúdo/público invalida aprovação; tentativa repetida não duplica envio |
-| 5. Domain Packs | Manifesto, instalação/binding por Product, ferramentas de leitura/persistência do product/domain specialist e evals | Pack ligado altera somente o Product selecionado; desligá-lo restaura comportamento genérico |
+| 5. Domain Packs | Manifesto, instalação/binding por Product, ferramentas de leitura/persistência do product/domain specialist e [evals](./EVAL_PLAN.md) | Pack ligado altera somente o Product selecionado; desligá-lo restaura comportamento genérico |
 | 6. Creative Studio inicial | CreativeBrief, Sets/Artifacts/Variants, geração de imagem por adapter, asset store, custo e aprovação | Um kit com variantes é revisável por versão, sem publicação automática |
 | 7. Migração Notion | Inventário, importador com preview e relatório, corte de escrita, exportação opcional | Fluxo completo funciona sem Notion e conteúdo importado tem rastreabilidade |
 | 8. Operação e medição | Métricas com origem, dashboards, monitoramento de execução, retenção e documentação de extensão | Estados externos reconciliados e KPIs distinguem observado de estimado |
