@@ -13,7 +13,7 @@ Campaign reúne objetivo, público, oferta, Product(s), período, canais, orçam
 | Escopo | Products e `context_version_id`, `domain_pack_version`, canais e destinos autorizados |
 | Planejamento | `brief_version`, WorkItems com responsável, dependências, prazo e critério de pronto |
 | Medição | metas, KPIs definidos antes do lançamento, UTMs normalizadas, fontes de dados e janela de leitura |
-| Execução | Deliverables/version, aprovações, agendamentos, ExternalActions e IDs de provedores |
+| Execução | Deliverables/version, DomainAdvisory, CreativeBrief/Set/Variants, aprovações, agendamentos, ExternalActions e IDs de provedores |
 | Resultado | eventos de envio/publicação, métricas observadas com origem e hora, aprendizados e limitações |
 
 ## Estados e transições
@@ -22,7 +22,9 @@ Campaign reúne objetivo, público, oferta, Product(s), período, canais, orçam
 
 ## Trabalho e entrega
 
-WorkItems tipados (`research`, `positioning`, `seo`, `long_form`, `social`, `email`, `review`, `publish`, `measure`) formam um grafo acíclico simples. Uma newsletter liga `long_form → email → review → send`; uma peça orientada a busca liga `seo → long_form → review`. Entrega contém tipo, formato, canal, Product principal, versão de brief/contexto, corpo ou asset, referências e ressalvas. Revisar gera nova versão e invalida aprovação anterior daquela entrega.
+WorkItems tipados (`research`, `positioning`, `domain_review`, `seo`, `long_form`, `creative`, `social`, `email`, `review`, `publish`, `measure`) formam um grafo acíclico simples. Uma newsletter liga `long_form → email → review → send`; uma peça orientada a busca liga `seo → long_form → review`; um kit visual liga `positioning/copy → domain_review quando exigido → creative_brief → creative_set → review → publish`. Entrega contém tipo, formato, canal, Product principal, versão de brief/contexto, corpo ou asset, referências e ressalvas. Revisar gera nova versão e invalida aprovação anterior daquela entrega.
+
+Cada CreativeSet contém CreativeArtifacts independentes, como hero, carrossel, roteiro ou book. CreativeVariant aponta para o master e declara hipótese, dimensão alterada, canal e métrica. A performance referencia a versão efetivamente publicada. Rendering e geração por provedores são etapas de execução rastreadas por custo, modelo e direitos de uso.
 
 ## Tracking e medição
 
@@ -30,4 +32,4 @@ Preservar a normalização de `build_tracked_link`, agora derivando `utm_campaig
 
 ## UI mínima
 
-Lista e detalhe de campanhas, editor do brief, quadro de WorkItems/dependências, biblioteca de Deliverables com versões e diff, fila de aprovação e painel de resultados com origem de cada métrica. Chat aparece no contexto de uma Campaign/Product, mantendo sessão Eve associada aos IDs para retomada coerente.
+Lista e detalhe de campanhas, editor do brief, quadro de WorkItems/dependências, biblioteca de Deliverables com versões e diff, espaço de criativos com CreativeBrief, Sets e variantes, fila de aprovação e painel de resultados com origem de cada métrica. Chat aparece no contexto de uma Campaign/Product, mantendo sessão Eve associada aos IDs para retomada coerente.

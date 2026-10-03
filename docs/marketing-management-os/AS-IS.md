@@ -2,7 +2,7 @@
 
 ## Escopo e evidência
 
-Leitura da árvore versionada em 2026-10-03. O pacote `node_modules` e o diretório `.git` não estão presentes neste workspace; não executei Eve discovery, build, sessão real ou comparação com commits. A análise de comportamento abaixo deriva do código e das instruções, não de execução em produção. O [mapa existente](../ARCHITECTURE.md) e o [guia do repositório](../../AGENTS.md) complementam esta fotografia.
+Fotografia da árvore original em 2026-10-03, antes da adição dos dois especialistas descritos em [AGENT_TOPOLOGY](./AGENT_TOPOLOGY.md). Naquela leitura, `node_modules` e `.git` não estavam presentes; a análise de comportamento abaixo deriva do código e das instruções, não de execução em produção. O [mapa existente](../ARCHITECTURE.md) e o [guia do repositório](../../AGENTS.md) descrevem o estado corrente.
 
 ## Componentes existentes
 

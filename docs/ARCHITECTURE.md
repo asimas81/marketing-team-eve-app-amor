@@ -13,11 +13,13 @@ This document maps how the agent is put together, for humans and AI agents worki
 
 Marketing agents arranged as a hierarchy on the [eve](https://eve.dev) framework. The root **lead** grounds itself in a shared brand context document and this user's standing preferences, then routes the request to exactly one specialist. `product-marketer` owns positioning: the competitive alternatives, the segment, the message hierarchy, and the shared brand context document itself. `content-marketer` owns long-form: content planning by buyer stage, then blog posts, landing pages, case studies, newsletters, and docs, written into Notion rather than handed back as chat text. `social-media-coordinator` owns short-form: posts and threads for X, LinkedIn, Threads, Bluesky, and Mastodon, handed back in the conversation, plus Notion briefs. `seo` owns organic search: page and site audits, hierarchy and internal linking, JSON-LD schema, and templated page sets. `email` owns the email channel: taking copy that already exists, reworking it to survive an inbox, then building, targeting, and sending it in Resend. No specialist delegates further: each gathers its own evidence with the framework's `web_search` and `web_fetch`, and the ones that touch prose run their own review pass against the editing rubrics before handing work back. Shared state (brand context, per-user preferences, assets) lives in Vercel Blob.
 
-The five specialists do not overlap by accident. `product-marketer` decides what the team claims, `content-marketer` writes the words, `seo` decides which pages should exist and whether one is findable, and `social-media-coordinator` and `email` are the two that can put something in front of an audience. Where their guidance touches the same number, such as title length or internal-link counts, the specs are kept in agreement rather than duplicated silently.
+Two additional local subagents prepare the execution plane for the Marketing Management OS. `product-domain-specialist` reviews product/domain evidence, constraints and claims when the lead needs that advice. `creative-producer` makes briefs, production specifications, scripts, storyboards and variant plans from approved inputs. They receive the relevant context in their delegation message and return text for review. The [runtime contract](./marketing-management-os/AGENT_RUNTIME_CONTRACT.md) defines the future OS API boundary; neither new subagent currently persists business records or generates rendered files.
+
+The seven specialists do not overlap by accident. `product-marketer` decides positioning and messaging; `product-domain-specialist` reviews product/domain truth and claims; `content-marketer` writes long-form copy; `creative-producer` turns approved inputs into creative specifications and variants; `seo` decides which pages should exist and whether one is findable; `social-media-coordinator` drafts short-form; and `email` adapts and operates the inbox channel. The two new specialists currently return reviewable text because the Marketing OS context, asset, and approval APIs are not connected. Where guidance touches the same number, such as title length or internal-link counts, the specs are kept in agreement rather than duplicated silently.
 
 `content-marketer` and `email` are the pair most likely to blur, so the split is by job rather than by artifact: the content marketer authors the prose, and the email agent adapts it and operates the channel. A newsletter is therefore two hops, and the lead chains them with an artifact id or a Notion link rather than briefing both. The email agent's own writing work is the email-fit pass (subject and preview text, one call to action, the plain text version, link and alt text hygiene), never a draft from nothing.
 
-The dependency runs one way. The product marketer writes the brand context document, and the other three read it at the start of every task. That makes it the one piece of shared state whose quality bounds everything else, which is why one specialist owns authoring it and its structure is a skill rather than a convention.
+The original five specialists continue to use the global brand context. The product marketer owns that document. The product-domain specialist and creative producer receive relevant approved Product Context and Domain Pack excerpts in the lead's self-contained brief until the Marketing OS API becomes available. The global document must not be treated as product-specific truth for multiple Products.
 
 There is no central registry or wiring file: a tool's name is its filename, a subagent's name is its directory name, a connection's name is its filename, and a skill's name is its directory name. eve walks `agent/` at build time and produces a manifest from what it finds. Adding a specialist means adding a directory; removing one means deleting it. `npx eve info` prints the resulting surface.
 
@@ -57,6 +59,16 @@ agent/
       skills/brand-context/         # the shared document's structure and merge rules
       tools/                        # 5 asset tools, get/save_brand_context, save/read_artifact,
                                     #   bash disabled
+    product-domain-specialist/
+      agent.ts  instructions.md     # consultative product/domain review
+      skills/domain-advisory/       # evidence, constraints, advisory handoff
+      skills/claim-review/          # claim disposition against approved facts
+      tools/bash.ts                 # shell disabled; context arrives in the brief
+    creative-producer/
+      agent.ts  instructions.md     # creative briefs and production specifications
+      skills/creative-brief/        # per-format planning and variants
+      skills/creative-review/       # brand, claim, accessibility and rights pass
+      tools/bash.ts                 # shell disabled; rendering tools not connected
     social-media-coordinator/
       agent.ts  instructions.md     # short-form drafting and platform fit
       sandbox.ts                    # its own sandbox; subagents inherit nothing
@@ -114,18 +126,20 @@ agent/
 | Shared state tools | `agent/tools/*.ts` + `lib/brand-context`, `lib/user-preferences` | tools | Read and write the team-wide brand context and the per-user preference document in Blob. |
 | Social media coordinator | `agent/subagents/social-media-coordinator/` | subagent | Drafts short-form for five platforms and hands the drafts back. Reads and writes Notion. Owns six skills. |
 | Product marketer | `agent/subagents/product-marketer/` | subagent | Interviews the user, researches the competitive set, decides positioning and messaging, then writes the shared brand context document. The only specialist whose deliverable is that document rather than a piece of work. Owns four skills and a sandbox. Grades every claim `proven`, `plausible`, or `assumption`, so downstream agents know when to hedge. Does not draft posts, pages, or campaigns. |
+| Product/domain specialist | `agent/subagents/product-domain-specialist/` | subagent | Reviews product facts, domain rules, claims and risks from approved context supplied by the lead. Returns an advisory, not a business approval. Has no business-state write tools. |
+| Creative producer | `agent/subagents/creative-producer/` | subagent | Creates creative briefs, visual specifications, scripts, storyboards and variant plans from approved inputs. A rendered asset requires a future generation and asset service. |
 | Content marketer | `agent/subagents/content-marketer/` | subagent | Plans content by buyer stage, then drafts long-form. Owns four skills and a sandbox. Does not publish, schedule, or touch social accounts. |
 | SEO | `agent/subagents/seo/` | subagent | Audits a page against what a fetch can actually show, plans hierarchy, URLs and internal linking, writes JSON-LD, and scopes templated page sets. Owns four skills and a sandbox. Recommends titles, meta descriptions, and slugs; hands body copy to the content marketer. Has no crawler, rank tracker, or Search Console, and says so instead of inferring. |
 | Email | `agent/subagents/email/` | subagent | Takes copy the content marketer (or the user) already wrote, reworks it for an inbox, then builds the template or broadcast in Resend, picks a verified from address, targets the segment, and reports delivery. Owns four skills and a sandbox. Does not originate long-form prose, and says so rather than producing a thin version of it. Cannot see inbox placement or domain reputation, and marks every deliverability check with the tool that verifies it. |
 | Resend connection | `.../email/connections/resend.ts` | connection | Remote MCP, user-scoped OAuth through Vercel Connect, the same as Notion. The only connection that narrows discovery: `tools.allow` cuts around 85 published tools to the 47 that make up the campaign, list, diagnostic, and read-only-domain surface, leaving out API keys, webhooks, and domain writes entirely. Sends (`send-broadcast`, `send-email`, `send-batch-emails`) and destructive calls always pause for approval, scheduled or not, since Resend splits composing from committing into separate tools. The connector issues only `user` tokens, so sends are attributed to the person who approved them. |
-| Notion connection | `agent/connections/notion.ts` and one per specialist | connection | Remote MCP, user-scoped OAuth, identical in all six copies. Updates, moves, and view changes pause for approval; page creation is deliberately ungated, since drafting into Notion is the normal flow. |
+| Notion connection | `agent/connections/notion.ts` and one per original specialist | connection | Remote MCP, user-scoped OAuth, identical in all six copies. Updates, moves, and view changes pause for approval; page creation is deliberately ungated, since drafting into Notion is the normal flow. |
 | Asset tools | `lib/vercel-blob/tools.ts`, wired per agent | tools | Upload, list, inspect, download, and delete Blob assets. Deletes pause for approval; the reserved brand-context and preference prefixes are refused. |
 | Style lint | `lib/content/tools.ts` | tool factory | Reads `references/banned-words.json` from the calling agent's `<surface>-style` skill and returns `{ ok, violations }`. The coordinator passes five surfaces; the content marketer passes `blog`; the email agent passes `email`. |
-| Handoff artifacts | `lib/artifacts/` | tool factories | `save_artifact` writes a Markdown document to a private Blob under the reserved `artifacts/` prefix and returns an id; `read_artifact` reads it back through the authenticated path. All five specialists hold both. The lead holds only the reader, so a long document can be relayed between specialists by id without passing through the lead's context. This is also the main channel from the content marketer to the email agent. |
+| Handoff artifacts | `lib/artifacts/` | tool factories | `save_artifact` writes a Markdown document to Blob under the reserved `artifacts/` prefix and returns an id; `read_artifact` reads it back by path. The original five specialists hold both. The lead holds only the reader, so a long document can be relayed between those specialists by id without passing through the lead's context. The new specialists await Workspace-scoped Marketing OS artifact tools. |
 | Campaign tracking | `lib/tracking/` | tool factory | `build_tracked_link` adds `utm_*` parameters to a batch of links, deriving source and medium from the surface and normalizing the campaign name, so one campaign doesn't arrive in analytics as several spellings. Held by the coordinator and the email agent. Deliberately not on links between pages of your own site. |
 | Writing quality | `lib/writing-quality/skill.ts` | skill factory | The surface-independent prose rules and their two reference lists, defined once and called from a one-line `skills/writing-quality.ts` in each agent that drafts or edits prose. `defineSkill` materializes the references as real sibling files, so the compiled package matches an authored directory. |
 
-The two channels are the only inbound boundary, and Blob plus the Notion and Resend MCP servers are the only outbound ones. Everything else is model reasoning over loaded skills. Each specialist call starts a fresh session with none of the lead's conversation, skills, connections, or sandbox, so the lead's job is to write a complete `message`. The tree is one level deep: the lead delegates, and specialists do not.
+The two channels are the only inbound boundary, and Blob plus the Notion and Resend MCP servers are the only outbound ones. Everything else is model reasoning over loaded skills. Each specialist call starts a fresh session with none of the lead's conversation, skills, connections, or sandbox, so the lead's job is to write a complete `message`. The tree is one level deep: the lead delegates, and specialists do not. The new specialists have no Notion/Resend or Blob write connection, so they return advisory and production specifications in their replies until Marketing OS API integration is built.
 
 ## Data flow
 
@@ -136,7 +150,9 @@ you
          ├─ get_brand_context / get_user_preferences        (Blob read)
          ├─ save_brand_context / save_user_preferences      (Blob write, ungated)
          └─ one specialist, briefed in full
-             ├─ get_brand_context                           (Blob read, again: fresh context)
+             ├─ get_brand_context                           (original five: Blob read)
+             ├─ product/domain advisory                     (new specialist: reply handoff)
+             ├─ creative brief/specifications               (new specialist: reply handoff)
              ├─ save_brand_context                          (product-marketer: its deliverable)
              ├─ load_skill <surface>-style, writing-quality  (sandbox materializes references/)
              ├─ load_skill positioning, messaging, ...        (product-marketer only)
@@ -144,7 +160,7 @@ you
              ├─ web_fetch a page under review                (seo only: server HTML, no JS)
              ├─ web_search / web_fetch                       (own research, source-budgeted)
              ├─ lint_against_style                           (banned-words check)
-             ├─ save_artifact -> id                          (long output, private Blob)
+             ├─ save_artifact -> id                          (original five: long output in Blob)
              ├─ read_artifact <id>                           (an artifact the brief named)
              ├─ load_skill content-editing, writing-quality   (own review pass before handback)
              ├─ load_skill email-adaptation, resend-build     (email only)

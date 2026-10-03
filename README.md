@@ -5,7 +5,7 @@
 [![Agent Stack](https://img.shields.io/badge/Agent%20Stack-000?style=flat-square&logo=vercel&logoColor=FFF&labelColor=000&color=000)](https://vercel.com/kb/agent-stack)
 [![MIT License](https://img.shields.io/badge/License-MIT-000?style=flat-square&logo=opensourceinitiative&logoColor=white&labelColor=000&color=000)](LICENSE)
 
-Run a team of marketing agents built on [eve](https://eve.dev). You bring work to a team lead: a launch to plan, posts to write, or a page that isn't converting. The lead briefs the right specialist and hands back what they produced.
+Run a team of marketing agents built on [eve](https://eve.dev). You bring work to a team lead: a launch to plan, posts to write, a creative concept to develop, or a page that isn't converting. The lead briefs the right specialist and hands back what they produced.
 
 You talk to it in the Next.js web chat, Slack, or the eve terminal. It delivers real work in the tools you already use: blog drafts in Notion, social drafts in the conversation, email campaigns in Resend.
 
@@ -49,7 +49,7 @@ Select or create the Vercel project for this new application. In that project's 
 | Resource | Configuration |
 | --- | --- |
 | Vercel AI Gateway | Access and credits for the lead and specialist models, including calls with tools |
-| Vercel Sandbox | Project access for the six agent sandboxes and their skill files |
+| Vercel Sandbox | Project access for the existing six agent sandboxes and their skill files |
 | Vercel Blob | A dedicated public Blob store attached to this project; retain the generated environment configuration |
 | Notion through Vercel Connect | `NOTION_CONNECTOR`: the new connector UID |
 | Resend through Vercel Connect | `RESEND_CONNECTOR`: the new connector UID |
@@ -66,7 +66,7 @@ Open the local URL printed by Vercel. For a fixed loopback address, use `pnpm de
 
 Never copy another project's `.env.local`, `.vercel`, `.eve`, or build output. The new Blob store starts without brand context, preferences, and handoff artifacts. Establish the new product's context through the product marketer. Each user authorizes Notion and Resend through the connection flow; connector UIDs do not replace that authorization.
 
-The lead is configured as `google/gemini-3.8-flash`; all five specialists use `anthropic/claude-opus-5`. These values live in each `agent.ts`. Verify model access with a delegated request that uses a tool. A successful plain-text model call alone does not establish tool-call access.
+The lead is configured as `google/gemini-3.8-flash`; all seven specialists use `anthropic/claude-opus-5`. These values live in each `agent.ts`. Verify model access with a delegated request that uses a tool. A successful plain-text model call alone does not establish tool-call access.
 
 ### Channels and deployment
 
@@ -95,18 +95,22 @@ Before an email campaign, verify the sending domain and create at least one segm
 | `social-media-coordinator` | Short-form for X, LinkedIn, Threads, Bluesky, and Mastodon | Drafts in the conversation |
 | `seo` | Page and site audits, hierarchy and internal linking, JSON-LD schema, templated page sets | Recommendations, long audits as artifacts |
 | `email` | Reworking existing copy for the inbox, then building, targeting, and sending in Resend | A Resend campaign link |
+| `product-domain-specialist` | Reviewing product and domain facts, terminology, claims, constraints, and risks | A structured advisory for the next specialist |
+| `creative-producer` | Turning approved strategy and copy into creative briefs, visual specifications, storyboards, and reviewable variants | Production specifications and review findings |
 
-The team shares one piece of state: the **brand context document**, a short file describing what your product is, who it's for, and what the team claims about it. The product marketer maintains it; every other specialist reads it at the start of a task. Because it's the team's only shared state, it has a single owner.
+The existing workflow shares one **brand context document**, a short file describing what one product is, who it's for, and what the team claims about it. The product marketer maintains it; the original specialists read it at the start of a task. The two new specialists receive the relevant approved context in the lead's brief. The future Marketing OS will store Product Context separately for each Product.
 
 Each specialist has a distinct job: the product marketer decides what the team claims, the content marketer writes long-form copy, `seo` decides which pages should exist, `social-media-coordinator` drafts short-form, and `email` publishes to an audience. Newsletters route through two of them: the content marketer writes the prose, then the email specialist adapts it for the inbox and sends it through Resend, so newsletters still get the content marketer's planning and editing passes.
 
 ## How it works
 
-- **One lead, five specialists.** The lead loads the brand context and your preferences, writes a brief for the right specialist, and hands back what they produce. It never writes deliverables itself.
-- **Every brief is self-contained.** Specialists start fresh each time, with no shared conversation history, so the lead's brief carries everything and each specialist reads the brand context itself.
+- **One lead, seven specialists.** The lead loads the brand context and your preferences, writes a brief for the right specialist, and hands back what they produce. It never writes deliverables itself.
+- **Every brief is self-contained.** Specialists start fresh each time, with no shared conversation history, so the lead's brief carries everything. The original five also read the global brand context; the new two use the approved task context supplied in the brief.
 - **Delegation goes one level deep.** Specialists do their own research and edit their own drafts against a written rubric rather than spawning further agents.
 - **Nothing irreversible happens without you.** Sends and deletes in Resend, and page moves in Notion, all wait for your approval. Drafting stays friction-free. The email specialist also only sees 47 of Resend's roughly 85 tools, so account administration is out of reach entirely.
-- **Slack pins four starter prompts** in a fresh conversation, one per specialist: sharpen our positioning, write a blog post, draft social posts, review a page's SEO.
+- **Slack pins four starter prompts** in a fresh conversation: sharpen our positioning, write a blog post, draft social posts, review a page's SEO.
+
+The two new specialists are the first execution-plane step toward the [Marketing Management OS architecture](./docs/marketing-management-os/AGENT_TOPOLOGY.md). They work from approved context included in the lead's brief. The Product Context, Domain Pack, creative asset, approval, and campaign APIs are planned, not connected here yet. The creative producer currently returns production specifications; it does not render image or video files. The original five specialists, Eve channels, and web chat remain in place.
 
 The full approval matrix, the credential model, and the reasoning behind each boundary live in [`docs/ARCHITECTURE.md`](./docs/ARCHITECTURE.md).
 

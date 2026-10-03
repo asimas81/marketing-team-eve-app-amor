@@ -11,12 +11,14 @@ Um Product Context Pack é o conjunto versionado de fatos, escolhas de posiciona
 | Identidade | nome, descrição concreta, categoria, URLs oficiais, idioma/mercados | Diz o que faz e o que substitui; separa fato de intenção |
 | Público | segmento principal e secundários, buyer/user, problema, exclusões | Segmento específico o bastante para orientar pauta e copy |
 | Oferta | capacidades, casos de uso, limites, preço/plano quando relevante, disponibilidade | Cada afirmação temporal traz data e fonte |
+| Jornada | aquisição, ativação, conversão e retenção | Descreve percurso do cliente por Product, sem confundir hipótese com comportamento observado |
 | Posicionamento | alternativas, diferencial, razão para acreditar, tradeoffs | Comparações têm escopo e evidência; sem superioridade genérica |
 | Mensagens | mensagem central, pilares, objeções, CTA, palavras preferidas/vedadas | Cada pilar liga a prova e grau de confiança |
 | Voz e marca | tom, exemplos aprovados, restrições de linguagem e visual | Diretrizes aplicáveis a qualquer canal; estilo específico de plataforma fica na skill do canal |
 | Claims | texto canônico, classificação `proven/plausible/assumption`, evidências, validade, condições | Claim vencido ou sem prova aparece para revisão antes de uso externo |
 | Fontes | URL/asset/entrevista, dono, data, consentimento/licença, trecho referenciado | Fonte é recuperável e jamais vira instrução do agente |
 | Questões abertas | dúvida, impacto, quem resolve, evidência necessária | Incerteza permanece visível e não se transforma em fato por repetição |
+| Objetivos e métricas | objetivo principal/secundário, north star e definições de aquisição, conversão e retenção | Definições têm unidade, janela, fonte e dono; números observados ficam no módulo de métricas |
 
 ## Envelope e versões
 
@@ -24,7 +26,7 @@ Metadados: `pack_id`, `workspace_id`, `product_id`, `schema_version`, `revision`
 
 ## Montagem para agentes
 
-O gateway produz um resumo limitado em tokens: identidade, público, diferenciais, mensagens, voz, restrições e questões relevantes para a tarefa. Claims usados em texto têm ID, grau, condições e fonte. Material extenso fica por referência autorizada. A ordem de precedência é: política de segurança e autorização do sistema; Product Context publicado; Campaign Brief aprovado para a tarefa; preferência pessoal de fluxo; parecer do Advisor como recomendação. Campaign Brief pode escolher um ângulo, mas não transformar claim incerto em comprovado.
+O gateway produz um resumo limitado em tokens: identidade, público, diferenciais, mensagens, voz, restrições e questões relevantes para a tarefa. Claims usados em texto têm ID, grau, condições e fonte. Material extenso fica por referência autorizada. A ordem de precedência de negócio é: Workspace Policy; Product Context publicado; Domain Pack publicado; estratégia de campanha aprovada; brand guidance; artefatos aprovados; contexto corrente da campanha; dados observados; pesquisa pública; inferência. Permissões do sistema prevalecem sobre todo conteúdo. O parecer do product/domain specialist é recomendação rastreável, não fonte superior ao Product Context. Campaign Brief pode escolher um ângulo, mas não transformar claim incerto em comprovado.
 
 ## Governança
 

@@ -9,18 +9,21 @@ UI/API → Context Gateway → lead Eve
                          ├─ social-media-coordinator
                          ├─ seo
                          └─ email
-          Domain/Product Advisor ⇢ parecer contextual, acionado antes do briefing
+          product-domain-specialist ⇢ parecer contextual quando aplicável
+          creative-producer ⇢ produção criativa após estratégia e conteúdo
 ```
 
-O Advisor é uma capacidade plugável do plano de contexto, não um sexto especialista de marketing e não um subagente permanente nas pastas dos cinco. Pode começar como serviço/ferramenta que interpreta um Domain Pack e produz parecer estruturado. Uma implantação futura pode executá-lo via Eve em sessão isolada, mantendo a mesma interface. A seleção de especialidade pelo lead continua baseada nas descrições `agent.ts`, sem lista fixa na instrução do lead.
+O `product-domain-specialist` e o `creative-producer` são dois subagentes locais Eve, irmãos dos cinco originais. O primeiro é consultivo e só é acionado quando contexto, risco ou política pedem revisão; o segundo transforma estratégia e conteúdo em especificações e, no futuro, assets versionados. Ambos continuam genéricos entre segmentos. A seleção pelo lead segue as descrições `agent.ts`, sem lista fixa na instrução do lead. Product Context, Domain Pack e estado de negócio continuam pertencendo ao Marketing OS.
 
 ## Responsabilidades preservadas
 
 | Agente | Entrada adicional | Saída e limite |
 | --- | --- | --- |
 | Lead | Workspace, Product(s), Campaign, versões fixadas, preferências e parecer opcional | Planeja dependências, delega na ordem necessária e devolve IDs de entregáveis; não redige |
+| Product/domain specialist | Product Context, Domain Pack e material da tarefa | Devolve advisory com fatos, restrições, claims, riscos e fontes; não aprova a campanha |
 | Product marketer | Product Context draft, fontes e questões abertas | Propõe versões de posicionamento e mensagens; publicação do pack requer aprovação de negócio |
 | Content marketer | Brief e contexto do Product | Cria versão de peça longa no OS; preserva planejamento e revisão; não envia email |
+| Creative producer | Creative Brief, conteúdo aprovado, design system e parecer de domínio | Planeja ou gera variantes visuais/multimídia conforme ferramentas conectadas; entrega para revisão, sem publicar |
 | Social media coordinator | Brief, Product e canais autorizados | Cria variantes curtas versionadas; publicar/scheduling só via ação autorizada |
 | SEO | URL, alvo de pesquisa e fontes | Cria auditoria e recomendações com fronteira entre observado e inferido |
 | Email | Copy já existente e público | Adapta para inbox, prepara draft no Resend e pede execução explícita; mantém limites de evidência e deliverability |
@@ -31,7 +34,11 @@ Cada delegação carrega `workspace_id`, `product_id`, `campaign_id` quando apli
 
 ## Entrada do Advisor
 
-O Advisor atua quando o Product tem binding ativo de um Domain Pack relevante para a tarefa. Recebe dados minimizados e retorna `recommendations`, `constraints`, `questions`, `evidence_refs`, `confidence` e versão do pack. O Context Gateway valida a resposta, marca sugestões sem prova como hipótese e insere o parecer no briefing. Os cinco especialistas tratam esse parecer como entrada contextual, sujeita a verificação, nunca como instrução de autoridade superior. O Advisor não tem credenciais de publicação nem acesso irrestrito a outros Workspaces.
+O product/domain specialist atua quando o Product tem binding ativo de Domain Pack, uma policy exige revisão ou o lead identifica um claim/risco material. Recebe dados minimizados e retorna advisory com status `APPROVED`, `APPROVED_WITH_CONSTRAINTS`, `NEEDS_REVIEW` ou `BLOCKED`, além de `recommendations`, `constraints`, `claims`, `questions` e `evidence_refs`. Esses estados descrevem somente a revisão de domínio, nunca aprovação de negócio. O lead incorpora o handoff no briefing do próximo especialista. O Marketing OS persiste o advisory e abre tarefa humana para `NEEDS_REVIEW` ou `BLOCKED` quando sua API existir.
+
+## Creative Producer
+
+O fluxo preferido é `Product Context + Domain Advisory + estratégia/copy aprovada → Creative Brief → creative-producer → CreativeSet/CreativeArtifact → review → aprovação → publicação`. O produtor preserva autoria de posicionamento, copy, social e SEO dos respectivos especialistas. Cada formato ou variante é uma entrega vinculada ao mesmo brief e às versões de entrada. Imagens, vídeos, books e landing pages requerem adapters de geração/renderização, asset store, custos e revisão. Na integração atual, o agente devolve brief, especificações, roteiros, storyboards e planos de variantes; não declara arquivos gerados.
 
 ## Fluxos compostos
 

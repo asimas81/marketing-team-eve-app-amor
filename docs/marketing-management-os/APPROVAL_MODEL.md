@@ -11,6 +11,8 @@ O OS distingue aprovação editorial/estratégica da autorização de uma ação
 | Criar Product/brief/draft | Usuário com papel editor | Sem gate adicional | Grava no OS e audita |
 | Publicar Product Context | Diff, claims e fontes | Product owner ou approver | Ativa versão imutável |
 | Aprovar Deliverable | Snapshot, fonte, preview e ressalvas | Reviewer designado | Marca aquela versão aprovada |
+| Revisar DomainAdvisory | Fatos, constraints, claims, fontes e status | Responsável de Product/domain quando `NEEDS_REVIEW` ou `BLOCKED` | Resolve conflito ou pede correção; parecer `APPROVED` não autoriza execução |
+| Aprovar CreativeArtifact | Preview da variante exata, copy, claims, brand fit, acessibilidade, direitos e custo | Reviewer designado | Libera somente aquela versão para possível publicação |
 | Exportar draft ao Notion | Destino e preview | Permissão de integração; aprovação se sobrescrever página | Exporta e grava ExternalReference |
 | Agendar/publicar em canal | Conteúdo aprovado, conta, horário | Approver com permissão de canal | Ação com idempotência e reconciliação |
 | Enviar email/segmento | Preview, from verificado, segmento e tamanho, horário, links, endereço e opt-out | Approver de envio; também gate Eve/Resend no commit | `send-*` e reconciliação do estado |
@@ -32,3 +34,5 @@ Preservar os gates `approval` já aplicados a deletes, movimentos Notion e sends
 ## Evidência e revisão
 
 A tela apresenta copy final e diff, claims sem prova, Product/pack/brief usados, destino externo e impacto estimado. Em email, conferir consentimento e jurisdições cabe ao dono da lista; o sistema registra a declaração e impede o fluxo quando itens obrigatórios não foram preenchidos. Status de domínio verificado não é alegação de inbox placement. A auditoria retém decisões e snapshots de acordo com política de retenção do Workspace.
+
+Para imagem, vídeo, book ou landing page, a revisão inclui preview renderizado quando houver, dimensões, safe areas, contraste, legendas, links, licenças de assets externos e consentimento de likeness. Uma especificação textual não passa automaticamente nas verificações que dependem de renderização. Publicar, gastar verba ou fazer deploy de produção requer uma autorização de execução separada para a variante e destino exatos.
